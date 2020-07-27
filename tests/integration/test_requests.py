@@ -78,11 +78,11 @@ def test_auth(tmpdir, httpbin_both):
 
 def test_auth_failed(tmpdir, httpbin_both):
     """Ensure that we can save failed auth statuses"""
-    auth = ("user", "wrongwrongwrong")
-    url = httpbin_both + "/basic-auth/user/passwd"
     with vcr.use_cassette(str(tmpdir.join("auth-failed.yaml"))) as cass:
         # Ensure that this is empty to begin with
         assert_cassette_empty(cass)
+        auth = ("user", "wrongwrongwrong")
+        url = httpbin_both + "/basic-auth/user/passwd"
         one = requests.get(url, auth=auth)
         two = requests.get(url, auth=auth)
         assert one.content == two.content

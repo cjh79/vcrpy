@@ -177,8 +177,8 @@ def test_params_same_url_distinct_params(tmpdir, scheme):
         assert cassette_response_json == response_json
         assert cassette.play_count == 1
 
-    other_params = {"other": "params"}
     with vcr.use_cassette(str(tmpdir.join("get.yaml"))) as cassette:
+        other_params = {"other": "params"}
         response, cassette_response_text = get(url, output="text", params=other_params)
         assert "No match for the request" in cassette_response_text
         assert response.status == 599
