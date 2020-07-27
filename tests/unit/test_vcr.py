@@ -115,14 +115,14 @@ def test_vcr_before_record_response_iterable():
 
 def test_before_record_response_as_filter():
     request = Request("GET", "/", "", {})
-    response = object()  # just can't be None
-
     # Prevent actually saving the cassette
     with mock.patch("vcr.cassette.FilesystemPersister.save_cassette"):
 
         filter_all = mock.Mock(return_value=None)
         vcr = VCR(before_record_response=filter_all)
         with vcr.use_cassette("test") as cassette:
+            response = object()  # just can't be None
+
             cassette.append(request, response)
             assert cassette.data == []
             assert not cassette.dirty

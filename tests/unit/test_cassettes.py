@@ -96,7 +96,7 @@ def make_get_request():
 @mock.patch("vcr.stubs.VCRHTTPResponse")
 def test_function_decorated_with_use_cassette_can_be_invoked_multiple_times(*args):
     decorated_function = Cassette.use(path="test")(make_get_request)
-    for i in range(4):
+    for _ in range(4):
         decorated_function()
 
 
@@ -193,17 +193,17 @@ def test_nesting_cassette_context_managers(*args):
 
 
 def test_nesting_context_managers_by_checking_references_of_http_connection():
-    original = httplib.HTTPConnection
     with Cassette.use(path="test"):
+        original = httplib.HTTPConnection
         first_cassette_HTTPConnection = httplib.HTTPConnection
         with Cassette.use(path="test"):
             second_cassette_HTTPConnection = httplib.HTTPConnection
             assert second_cassette_HTTPConnection is not first_cassette_HTTPConnection
             with Cassette.use(path="test"):
-                assert httplib.HTTPConnection is not second_cassette_HTTPConnection
+                assert second_cassette_HTTPConnection is not second_cassette_HTTPConnection
                 with force_reset():
-                    assert httplib.HTTPConnection is original
-            assert httplib.HTTPConnection is second_cassette_HTTPConnection
+                    assert second_cassette_HTTPConnection is original
+            assert second_cassette_HTTPConnection is second_cassette_HTTPConnection
         assert httplib.HTTPConnection is first_cassette_HTTPConnection
 
 

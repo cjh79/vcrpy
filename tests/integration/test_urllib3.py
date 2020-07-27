@@ -71,10 +71,10 @@ def test_auth_failed(tmpdir, httpbin_both, verify_pool_mgr):
     """Ensure that we can save failed auth statuses"""
     auth = ("user", "wrongwrongwrong")
     headers = urllib3.util.make_headers(basic_auth="{}:{}".format(*auth))
-    url = httpbin_both.url + "/basic-auth/user/passwd"
     with vcr.use_cassette(str(tmpdir.join("auth-failed.yaml"))) as cass:
         # Ensure that this is empty to begin with
         assert_cassette_empty(cass)
+        url = httpbin_both.url + "/basic-auth/user/passwd"
         one = verify_pool_mgr.request("GET", url, headers=headers)
         two = verify_pool_mgr.request("GET", url, headers=headers)
         assert one.data == two.data
@@ -142,18 +142,21 @@ def test_https_with_cert_validation_disabled(tmpdir, httpbin_secure, pool_mgr):
 
 
 def test_urllib3_force_reset():
-    cpool = urllib3.connectionpool
-    http_original = cpool.HTTPConnection
-    https_original = cpool.HTTPSConnection
-    verified_https_original = cpool.VerifiedHTTPSConnection
     with vcr.use_cassette(path="test"):
+        cpool = urllib3.connectionpool
+        http_original = cpool.HTTPConnection
         first_cassette_HTTPConnection = cpool.HTTPConnection
+        https_original = cpool.HTTPSConnection
         first_cassette_HTTPSConnection = cpool.HTTPSConnection
+        verified_https_original = cpool.VerifiedHTTPSConnection
         first_cassette_VerifiedHTTPSConnection = cpool.VerifiedHTTPSConnection
         with force_reset():
-            assert cpool.HTTPConnection is http_original
-            assert cpool.HTTPSConnection is https_original
-            assert cpool.VerifiedHTTPSConnection is verified_https_original
-        assert cpool.HTTPConnection is first_cassette_HTTPConnection
-        assert cpool.HTTPSConnection is first_cassette_HTTPSConnection
-        assert cpool.VerifiedHTTPSConnection is first_cassette_VerifiedHTTPSConnection
+            assert http_original is http_original
+            assert first_cassette_HTTPSConnection is https_original
+            assert first_cassette_VerifiedHTTPSConnection is verified_https_original
+        assert http_original is first_cassette_HTTPConnection
+        assert first_cassette_HTTPSConnection is first_cassette_HTTPSConnection
+        assert (
+            first_cassette_VerifiedHTTPSConnection
+            is first_cassette_VerifiedHTTPSConnection
+        )

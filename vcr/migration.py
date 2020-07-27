@@ -106,8 +106,11 @@ def migrate_yml(in_fp, out_fp):
     data = yaml.load(preprocess_yaml(in_fp.read()), Loader=Loader)
     if _already_migrated(data):
         return False
-    for i in range(len(data)):
-        data[i]["request"]["headers"] = _list_of_tuples_to_dict(data[i]["request"]["headers"])
+    for datum in data:
+        datum["request"]["headers"] = _list_of_tuples_to_dict(
+            datum["request"]["headers"]
+        )
+
     interactions = _migrate(data)
     out_fp.write(serialize(interactions, yamlserializer))
     return True

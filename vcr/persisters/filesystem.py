@@ -12,8 +12,7 @@ class FilesystemPersister(object):
                 cassette_content = f.read()
         except IOError:
             raise ValueError("Cassette not found.")
-        cassette = deserialize(cassette_content, serializer)
-        return cassette
+        return deserialize(cassette_content, serializer)
 
     @staticmethod
     def save_cassette(cassette_path, cassette_dict, serializer):

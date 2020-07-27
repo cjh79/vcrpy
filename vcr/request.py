@@ -16,10 +16,7 @@ class Request(object):
         self.method = method
         self.uri = uri
         self._was_file = hasattr(body, "read")
-        if self._was_file:
-            self.body = body.read()
-        else:
-            self.body = body
+        self.body = body.read() if self._was_file else body
         self.headers = headers
         log.debug("Invoking Request %s", self.uri)
 

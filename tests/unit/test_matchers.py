@@ -211,7 +211,7 @@ def test_get_assertion_message():
 def test_get_assertion_message_with_details():
     assertion_msg = "q1=1 != q2=1"
     expected = assertion_msg
-    assert matchers.get_assertion_message(assertion_msg) == expected
+    assert matchers.get_assertion_message(expected) == expected
 
 
 @pytest.mark.parametrize(

@@ -121,7 +121,7 @@ def test_original_response_is_not_modified_by_before_filter(tmpdir, httpbin):
         # Furthermore, the responses should be identical.
         inside_body = json.loads(inside.read().decode("utf-8"))
         outside_body = json.loads(outside.read().decode("utf-8"))
-        assert not inside_body[field_to_scrub] == replacement
+        assert inside_body[field_to_scrub] != replacement
         assert inside_body[field_to_scrub] == outside_body[field_to_scrub]
 
     # Ensure that when a cassette exists, the scrubbed response is returned.
